@@ -29,7 +29,86 @@ STEP-4: Multiply the two matrices to obtain the cipher text of length three.
 STEP-5: Combine all these groups to get the complete cipher text.
 
 ## PROGRAM 
+```
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int mod26(int x) {
+    int r = x % 26;
+    if (r < 0) r += 26;
+    return r;
+}
+
+int main() {
+    char plain[100];
+    int key[3][3];
+    int i, j, k;
+
+    printf("Enter plaintext (only letters): ");
+    scanf("%s", plain);
+
+    int len = strlen(plain);
+
+    // convert to uppercase
+    for (i = 0; i < len; i++) {
+        plain[i] = toupper(plain[i]);
+    }
+
+    // padding with X if needed
+    while (len % 3 != 0) {
+        plain[len] = 'X';
+        len++;
+    }
+    plain[len] = '\0';
+
+    printf("Enter 3x3 key matrix (row-wise):\n");
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            scanf("%d", &key[i][j]);
+            key[i][j] = mod26(key[i][j]);
+        }
+    }
+
+    char cipher[100];
+    int p[3], c[3];
+    int index = 0;
+
+    // process each block of 3 letters
+    for (i = 0; i < len; i += 3) {
+
+        // convert letters to numbers
+        for (j = 0; j < 3; j++) {
+            p[j] = plain[i + j] - 'A';
+        }
+
+        // matrix multiplication key * p
+        for (j = 0; j < 3; j++) {
+            c[j] = 0;
+            for (k = 0; k < 3; k++) {
+                c[j] += key[j][k] * p[k];
+            }
+            c[j] = mod26(c[j]);
+        }
+
+        // convert numbers back to letters
+        for (j = 0; j < 3; j++) {
+            cipher[index++] = c[j] + 'A';
+        }
+    }
+
+    cipher[index] = '\0';
+
+    printf("Cipher text: %s\n", cipher);
+
+    return 0;
+}
+```
 
 ## OUTPUT
+<img width="849" height="354" alt="image" src="https://github.com/user-attachments/assets/15d27714-bdc2-49a5-a91f-0ad1450138e6" />
 
 ## RESULT
+The program is executed successfully
+
+
